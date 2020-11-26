@@ -1,0 +1,93 @@
+{
+  // To develop inside a container on a remote host,
+  // - Run your VS Code with the environment variable `DOCKER_HOST=ssh://remote-user@remote-host:remote-ssh-port`.
+  // - Or, run your VS Code with the environment variable `DOCKER_CONTEXT=context-name`.
+  // - Or, add `"docker.context": "context-name"` in your settings.json.
+  // - Or, add `"docker.host": "ssh://remote-user@remote-host:remote-ssh-port"` in your settings.json.
+  "files.associations": {
+    "**/.vscode/.d/settings.*.json": "jsonc",
+    "**/.vscode/.d/tasks.*.json": "jsonc",
+    "**/.vscode/.d/launch.*.json": "jsonc",
+    "**/.vscode/.d/extensions.*.json": "jsonc",
+    "**/.devcontainer/.d/devcontainer.*.json": "jsonc",
+    ".editorconfig.*": "ini",
+    "rust-toolchain": "toml"
+  },
+  "files.insertFinalNewline": true,
+  // "files.exclude": {
+  //   "target/**": false
+  // },
+  "files.watcherExclude": {
+    "**/.devcontainer/.vscode-server/**": true,
+    "**/.devcontainer/.vscode-server-insiders/**": true,
+    "**/.devcontainer/tmp/**": true,
+    "**/.devcontainer/var/**": true,
+    "**/target/**": true
+  },
+  "search.exclude": {
+    "**/.devcontainer/.vscode-server/**": true,
+    "**/.devcontainer/.vscode-server-insiders/**": true,
+    "**/.devcontainer/tmp/**": true,
+    "**/.devcontainer/var/**": true,
+    "**/target/**": true
+  },
+  "[csv]": {
+    "editor.wordWrap": "off"
+  },
+  "[dockerfile]": {
+    "editor.defaultFormatter": "ms-azuretools.vscode-docker",
+    "editor.formatOnPaste": false,
+    "editor.formatOnSave": false
+  },
+  "[json]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2
+  },
+  "[jsonc]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2
+  },
+  "[sql]": {
+    "editor.formatOnSave": false
+  },
+  "[rust]": {
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "editor.formatOnType": true,
+    "editor.defaultFormatter": "rust-lang.rust-analyzer"
+  },
+  // "rust-analyzer.server.extraEnv": {
+  //   "RUSTUP_TOOLCHAIN": "stable"
+  // },
+  // "rust-analyzer.cargo.features": [
+  //   "all"
+  // ],
+  // "rust-analyzer.rustfmt.extraArgs": [],
+  // "rust-analyzer.rustfmt.overrideCommand": [],
+  "rust-analyzer.checkOnSave.command": "clippy",
+  // "rust-analyzer.checkOnSave.overrideCommand": [],
+  "lldb.verboseLogging": true,
+  "cSpell.words": [
+    "PTRACE",
+    "archlinux",
+    "buildkit",
+    "buildx",
+    "clippy",
+    "devcontainer",
+    "doctest",
+    "editorconfig",
+    "lldb",
+    "nodev",
+    "noexec",
+    "nofile",
+    "nosuid",
+    "relatime",
+    "rustc",
+    "rustfmt",
+    "seccomp",
+    "takaomag",
+    "tmpfs",
+    "tmpl",
+    "toolchain"
+  ]
+}

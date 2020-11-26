@@ -1,0 +1,26 @@
+{
+  "folders": [
+    {
+      "name": "tmpl.vscode-rust.0",
+      "path": "tmpl.vscode-rust.0"
+    }
+  ],
+  "settings": {
+    "files.associations": {
+      "**/.vscode/.d/settings.*.json": "jsonc",
+      "**/.vscode/.d/tasks.*.json": "jsonc",
+      "**/.vscode/.d/launch.*.json": "jsonc",
+      "**/.vscode/.d/extensions.*.json": "jsonc",
+      "**/.devcontainer/.d/devcontainer.*.json": "jsonc",
+      ".editorconfig.*": "ini",
+      "rust-toolchain": "toml"
+    },
+    // "rust-analyzer.rustfmt.extraArgs": [],
+    // "rust-analyzer.rustfmt.overrideCommand": [],
+    "rust-analyzer.checkOnSave.command": "clippy",
+    // "rust-analyzer.checkOnSave.overrideCommand": []
+  },
+  "extensions": {
+    "recommendations": []
+  }
+}

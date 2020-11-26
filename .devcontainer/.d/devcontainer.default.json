@@ -1,0 +1,110 @@
+// https://containers.dev/implementors/json_reference/
+// https://github.com/microsoft/vscode-dev-containers
+// https://github.com/microsoft/vscode-remote-try-rust
+// https://github.com/microsoft/vscode-dev-containers/tree/main/containers/rust
+// https://qiita.com/y-na-biz/items/af0137532e6e22802f25
+{
+  "name": "tmpl.vscode-rust.0",
+  // "build": {
+  //   "dockerfile": "Dockerfile",
+  //   "context": ".",
+  //   "args": {
+  //     "A_FROM_IMAGE": "quay.io/takaomag/base:latest",
+  //     "A_DEV_USER_ID": "1000",
+  //     "A_DEV_USER_NAME": "takaomag",
+  //     "A_DEV_GROUP_ID": "10001",
+  //     "A_DEV_GROUP_NAME": "developer",
+  //     "A_RUST_HOME": "/opt/project/share/rust"
+  //   }
+  // },
+  "image": "quay.io/takaomag/rust-dev:latest",
+  // "remoteUser": "takaomag",
+  // "containerUser": "takaomag",
+  "containerEnv": {
+    "X_VSCODE_WORK_DIR": "/opt/project/tmpl.vscode-rust.0",
+    "X_DEV_USER_ID": "1000",
+    "X_DEV_USER_NAME": "takaomag",
+    "X_DEV_GROUP_ID": "10001",
+    "X_DEV_GROUP_NAME": "developer",
+    "RUSTUP_HOME": "/opt/project/share/rust/.rustup",
+    "CARGO_HOME": "/opt/project/share/rust/.cargo"
+  },
+  "remoteEnv": {
+    "X_VSCODE_WORK_DIR": "${containerEnv:X_VSCODE_WORK_DIR}"
+    // "USER": "root"
+  },
+  "workspaceFolder": "/opt/project/tmpl.vscode-rust.0",
+  "workspaceMount": "type=bind,src=${localWorkspaceFolder},dst=${containerWorkspaceFolder}",
+  "mounts": [
+    "type=bind,src=${localWorkspaceFolder}/.devcontainer/.vscode-server/extensions,dst=${localEnv:HOME}/.vscode-server/extensions",
+    "type=bind,src=${localWorkspaceFolder}/.devcontainer/.vscode-server-insiders/extensions,dst=${localEnv:HOME}/.vscode-server-insiders/extensions",
+    "type=bind,src=/var/data.0/global-mount.0,dst=/var/data.0/global-mount.0",
+    "type=bind,src=${localEnv:HOME}${localEnv:USERPROFILE}/.aws,dst=${localEnv:HOME}/.aws,readonly=true",
+    "type=bind,src=${localEnv:HOME}${localEnv:USERPROFILE}/.config/gcloud,dst=${localEnv:HOME}/.config/gcloud",
+    "type=bind,src=/opt/project/share/rust,dst=/opt/project/share/rust",
+    "type=bind,src=/etc/machine-id,dst=/etc/machine-id,readonly=true"
+  ],
+  "runArgs": [
+    "--group-add",
+    "10001",
+    "--cap-add",
+    "SYS_PTRACE",
+    "--security-opt",
+    "seccomp=unconfined",
+    "--security-opt",
+    "apparmor=unconfined",
+    "--ulimit",
+    "nofile=262144:262144",
+    "--tmpfs",
+    // Replace `noexec` with `exec`. See https://github.com/rust-lang/rust/issues/40065
+    // "/tmp:rw,nosuid,nodev,noexec,noatime",
+    "/tmp:rw,nosuid,nodev,exec,noatime",
+    "--oom-score-adj",
+    "-500",
+    "--memory-swappiness",
+    "1",
+    "--network",
+    "host"
+  ],
+  // A command to run locally before anything else. This command is run before \"onCreateCommand\".
+  "initializeCommand": "[[ ! -e .devcontainer/initialize.sh ]] || source .devcontainer/initialize.sh",
+  // A command to run when creating the container. This command is run after \"initializeCommand\" and before \"updateContentCommand\".
+  "onCreateCommand": "[[ ! -e .devcontainer/on-create.sh ]] || source .devcontainer/on-create.sh",
+  // A command to run when creating the container and rerun when the workspace content was updated while creating the container. This command is run after \"onCreateCommand\" and before \"postCreateCommand\".
+  "updateContentCommand": "[[ ! -e .devcontainer/update-content.sh ]] || source .devcontainer/update-content.sh",
+  // A command to run after creating the container. This command is run after \"updateContentCommand\" and before \"postStartCommand\".
+  "postCreateCommand": "[[ ! -e .devcontainer/post-create.sh ]] || source .devcontainer/post-create.sh",
+  // A command to run after starting the container. This command is run after \"postCreateCommand\" and before \"postAttachCommand\".
+  "postStartCommand": "[[ ! -e .devcontainer/post-start.sh ]] || source .devcontainer/post-start.sh",
+  // A command to run when attaching to the container. This command is run after \"postStartCommand\".
+  "postAttachCommand": "[[ ! -e .devcontainer/post-attach.sh ]] || source .devcontainer/post-attach.sh",
+  "userEnvProbe": "loginInteractiveShell",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        // "terminal.integrated.shell.linux": "/bin/bash",
+        // "terminal.integrated.shellArgs.linux": [
+        //   "-l"
+        // ],
+        // "terminal.integrated.profiles.linux": {
+        //   "x-bash (login)": {
+        //     "path": "bash",
+        //     "args": [
+        //       "-l"
+        //     ]
+        //   }
+        // },
+        // "terminal.integrated.defaultProfile.linux": "x-bash (login)",
+        // "rust.rustfmt_path": "~/.cargo/bin/rustfmt",
+        "lldb.executable": "/usr/bin/lldb",
+        // "lldb.adapterType": "bundled",
+        "lldb.adapterType": "native"
+      },
+      "extensions": [
+        "ms-azuretools.vscode-docker",
+        "vadimcn.vscode-lldb",
+        "rust-lang.rust-analyzer"
+      ]
+    }
+  }
+}

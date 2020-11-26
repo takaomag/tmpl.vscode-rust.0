@@ -1,0 +1,71 @@
+# cargo-features = ["edition2021"]
+
+[package]
+name = "tmpl-crate"
+version = "0.1.0"
+authors = ["takaomag <takaomag@users.noreply.github.com>"]
+edition = "2021"
+description = "A Rust example crate"
+# documentation = "https://docs.rs/tmpl-crate"
+readme = "README.md"
+# homepage = "https://tmpl-crate.rs/"
+# repository = "https://github.com/takaomag/tmpl-crate"
+# license = "MIT OR Apache-2.0"
+# license-file = "LICENSE.txt"
+keywords = ["template"]
+categories = ["command-line-utilities"]
+build = false
+exclude = [
+  "**/.devcontainer.json",
+  "**/.devcontainer/",
+  "**/.editorconfig",
+  "**/.editorconfig.d/",
+  "**/.vscode/",
+  "**/*.code-workspace",
+  "**/.clippy.toml",
+  "**/clippy.toml",
+  "**/.rustfmt.toml",
+  "**/rustfmt.toml",
+  "**/rust-toolchain",
+  "**/rust-toolchain.toml",
+  "/README.tpl",
+]
+publish = false
+resolver = "2"
+default-run = "tmpl-crate-main"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+path = "src/lib.rs"
+test = true
+bench = false
+
+[[bin]]
+name = "tmpl-crate-main"
+path = "src/main.rs"
+test = false
+bench = false
+
+[[bin]]
+name = "tmpl-crate-daemon"
+path = "src/bin/bin_x.rs"
+test = false
+bench = false
+
+[[bin]]
+name = "tmpl-crate-client"
+path = "src/bin/bin_y.rs"
+test = false
+bench = false
+
+[[bench]]
+name = "benchmark_a"
+harness = false
+
+[dependencies]
+
+[dev-dependencies]
+criterion = "*"
+doc-comment = "*"
+# proptest = "*"
+# quickcheck = "*"

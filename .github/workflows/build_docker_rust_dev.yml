@@ -1,0 +1,161 @@
+name: Build/Push Docker image (rust-dev)
+
+on:
+  push:
+    branches:
+      - "**"
+      # - main
+      # - "releases/**"
+    paths:
+      - ".devcontainer.docker/**"
+      - .github/workflows/build_docker_rust_dev.yml
+    tags:
+      - "**"
+  # release:
+  #   types:
+  #     - published
+  # schedule:
+  #   - cron: "14 19 * * *"
+
+  workflow_dispatch:
+    inputs:
+      base_image_repo:
+        description: Base docker repository (without the prefix 'quay.io')
+        type: string
+        required: false
+        default: "takaomag/base"
+      base_image_tag:
+        description: Base docker image tag
+        type: string
+        required: false
+        default: "latest"
+      output_image_tag:
+        description: Tag for built docker image
+        type: string
+        required: false
+        default: ""
+
+concurrency:
+  # group: "${{ github.workflow }}@${{ github.event.pull_request.head.label || github.head_ref || github.ref || github.run_id }}"
+  group: "${{ github.workflow }}@${{ inputs.output_image_tag || 'default' }}.${{ github.ref || github.run_id }}"
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  X_BASE_IMAGE_REPO: >-
+    ${{
+      github.event_name == 'workflow_dispatch' && inputs.base_image_repo
+      || 'takaomag/base'
+    }}
+  X_BASE_IMAGE_TAG: >-
+    ${{
+      github.event_name == 'workflow_dispatch' && inputs.base_image_tag
+      || 'latest'
+    }}
+  X_OUTPUT_IMAGE_REPO: "takaomag/rust-dev"
+
+jobs:
+  build_push_docker_image_base:
+    name: Build/Push docker image (rust-dev)
+    timeout-minutes: 120
+    runs-on: "ubuntu-latest"
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: variables
+        id: variables_default
+        run: |-
+          _start_ts=$(date '+%Y%m%d%H%M%S')
+          _github_normalized_ref_name=$(sed -e 's/[^a-zA-Z0-9\-_]/-/g' <<< ${GITHUB_REF_NAME})
+          _base_image_info=$(
+            curl --fail --silent --location --retry 5 "https://quay.io/api/v1/repository/${X_BASE_IMAGE_REPO}/tag/?specificTag=${X_BASE_IMAGE_TAG}&onlyActiveTags=true&page=1&limit=1" \
+            | jq --compact-output '.tags[0] | {manifest_digest, last_modified}'
+          )
+          _base_image_digest=$(echo ${_base_image_info}  | jq -r .manifest_digest)
+          _base_image_digest_short=$(echo ${_base_image_digest} | cut -d ':' -f 2 | cut -c 1-12)
+          echo "X_START_TS=${_start_ts}" >> $GITHUB_ENV
+          echo "X_GITHUB_NORMALIZED_REF_NAME=${_github_normalized_ref_name}" >> $GITHUB_ENV
+          echo "X_GITHUB_SHA_SHORT=${GITHUB_SHA:0:7}" >> $GITHUB_ENV
+          echo "X_BASE_IMAGE_INFO=${_base_image_info}" >> $GITHUB_ENV
+          echo "X_BASE_IMAGE_DIGEST=${_base_image_digest}" >> $GITHUB_ENV
+          echo "X_BASE_IMAGE_DIGEST_SHORT=${_base_image_digest_short}" >> $GITHUB_ENV
+          echo "::set-output name=start_ts::${_start_ts}"
+          echo "::set-output name=github_normalized_ref_name::${_github_normalized_ref_name}"
+          echo "::set-output name=github_sha_short::${GITHUB_SHA:0:7}"
+          echo "::set-output name=base_image_info::${_base_image_info}"
+          echo "::set-output name=base_image_digest::${_base_image_digest}"
+          echo "::set-output name=base_image_digest_short::${_base_image_digest_short}"
+
+      - name: Check existing image
+        id: check_existing_image
+        run: |-
+          # if [[ "${GITHUB_EVENT_NAME}" == 'schedule' ]] && grep --max-count=1 --quiet "\.${X_GITHUB_SHA_SHORT}\.${X_BASE_IMAGE_DIGEST_SHORT}$" <<<$(curl --fail --silent --location --retry 5 "https://quay.io/api/v1/repository/${X_OUTPUT_IMAGE_REPO}/tag/?onlyActiveTags=true&page=1&limit=100" | jq --compact-output '.tags[].name' -r);then
+          #   echo "::set-output name=already_exists::true"
+          # else
+          #   echo "::set-output name=already_exists::false"
+          # fi
+          ## checkせずに毎日生成されるようにする。
+          echo "::set-output name=already_exists::false"
+
+      ## By default, this action uses the Git context, so you don't need to use the actions/checkout action to check out the repository as this will be done directly by BuildKit.
+      ## https://github.com/docker/build-push-action#git-context
+      - name: Checkout
+        id: checkout
+        if: ${{ !fromJSON(steps.check_existing_image.outputs.already_exists) }}
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Setup QEMU
+        id: setup_qemu
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: all
+
+      - name: Setup Docker buildx
+        id: setup_docker_buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login docker registry
+        id: login_docker_registry
+        if: ${{ !fromJSON(steps.check_existing_image.outputs.already_exists) }}
+        uses: docker/login-action@v2
+        with:
+          registry: quay.io
+          username: ${{ secrets.QUAY_IO_ROBOT_ACCOUNT_NAME }}
+          password: ${{ secrets.QUAY_IO_ROBOT_ACCOUNT_PASSWORD }}
+          logout: true
+
+      - name: Build/Push docker image
+        id: build_push_docker_image
+        if: ${{ !fromJSON(steps.check_existing_image.outputs.already_exists) }}
+        uses: docker/build-push-action@v3
+        with:
+          pull: true
+          push: true
+          # pushせずにローカルに保存
+          # load: true
+          ## localのファイルを見るので`.`
+          # context: "{{defaultContext}}:.devcontainer.docker"
+          context: ./.devcontainer.docker
+          file: ./.devcontainer.docker/Dockerfile.archlinux.default
+          no-cache: true
+          platforms: linux/amd64,linux/arm64/v8
+          # 改行コードを使用しているので`|`とかは使わず"で囲んでいる。
+          tags: "${{ \
+            github.event_name == 'workflow_dispatch' && inputs.output_image_tag != '' && \
+            format('quay.io/{0}:{1}', env.X_OUTPUT_IMAGE_REPO, inputs.output_image_tag) \
+            || github.ref == 'refs/heads/main' && \
+            format('quay.io/{0}:{1}.{2}.{3}.{4}\nquay.io/{0}:{1}\nquay.io/{0}:latest', env.X_OUTPUT_IMAGE_REPO, env.X_GITHUB_NORMALIZED_REF_NAME, env.X_START_TS, env.X_GITHUB_SHA_SHORT, env.X_BASE_IMAGE_DIGEST_SHORT) \
+            || format('quay.io/{0}:{1}.{2}.{3}.{4}\nquay.io/{0}:{1}', env.X_OUTPUT_IMAGE_REPO, env.X_GITHUB_NORMALIZED_REF_NAME, env.X_START_TS, env.X_GITHUB_SHA_SHORT, env.X_BASE_IMAGE_DIGEST_SHORT) \
+            }}"
+          build-args: |
+            "A_FROM_IMAGE=quay.io/${{ env.X_BASE_IMAGE_REPO }}@${{ env.X_BASE_IMAGE_DIGEST }}"
+          labels: |
+            "x_github_ref=${{ github.ref }}"
+            "x_github_ref_name=${{ github.ref_name }}"
+            "x_github_sha=${{ github.sha }}"

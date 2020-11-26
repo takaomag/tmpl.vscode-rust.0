@@ -1,0 +1,8 @@
+[workspace]
+members = ["tmpl-crate"]
+resolver = "2"
+
+[profile.release]
+# panic = "abort"
+lto = true
+codegen-units = 1

@@ -1,0 +1,401 @@
+// {
+//   "version": "2.0.0",
+//   "tasks": [
+//     {
+//       "label": "cargo test",
+//       "type": "cargo",
+//       "group": {
+//         "kind": "test",
+//         "isDefault": true
+//       },
+//       "command": "test",
+//       "args": [
+//         "${input:CargoTest.options}"
+//       ],
+//       "presentation": {
+//         "echo": true,
+//         "reveal": "always",
+//         "focus": false,
+//         "panel": "shared",
+//         "showReuseMessage": true,
+//         "clear": false
+//       },
+//       "problemMatcher": [
+//         "$rustc"
+//       ]
+//     },
+//     {
+//       "label": "cargo bench",
+//       "type": "cargo",
+//       "group": "test",
+//       "command": "bench",
+//       "args": [
+//         "${input:CargoBench.options}"
+//       ],
+//       "presentation": {
+//         "echo": true,
+//         "reveal": "always",
+//         "focus": false,
+//         "panel": "shared",
+//         "showReuseMessage": true,
+//         "clear": false
+//       },
+//       "problemMatcher": [
+//         "$rustc"
+//       ]
+//     },
+//     {
+//       "label": "cargo outdated",
+//       "type": "cargo",
+//       "group": "build",
+//       "command": "outdated",
+//       "args": [
+//         "${input:CargoOutdated.options}"
+//       ],
+//       "presentation": {
+//         "echo": true,
+//         "reveal": "always",
+//         "focus": false,
+//         "panel": "shared",
+//         "showReuseMessage": true,
+//         "clear": false
+//       },
+//       "problemMatcher": [
+//         "$rustc"
+//       ]
+//     },
+//     {
+//       "label": "cargo upgrade",
+//       "type": "cargo",
+//       "group": "build",
+//       "command": "upgrade",
+//       "args": [
+//         "${input:CargoUpgrade.options}"
+//       ],
+//       "presentation": {
+//         "echo": true,
+//         "reveal": "always",
+//         "focus": false,
+//         "panel": "shared",
+//         "showReuseMessage": true,
+//         "clear": false
+//       },
+//       "problemMatcher": [
+//         "$rustc"
+//       ]
+//     },
+//     {
+//       "label": "cargo audit",
+//       "type": "cargo",
+//       "group": "build",
+//       "command": "audit",
+//       "args": [
+//         "${input:CargoAudit.options}"
+//       ],
+//       "presentation": {
+//         "echo": true,
+//         "reveal": "always",
+//         "focus": false,
+//         "panel": "shared",
+//         "showReuseMessage": true,
+//         "clear": false
+//       },
+//       "problemMatcher": [
+//         "$rustc"
+//       ]
+//     },
+//     {
+//       "label": "cargo license",
+//       "type": "cargo",
+//       "group": "build",
+//       "command": "license",
+//       "args": [
+//         "${input:CargoLicense.options}"
+//       ],
+//       "presentation": {
+//         "echo": true,
+//         "reveal": "always",
+//         "focus": false,
+//         "panel": "shared",
+//         "showReuseMessage": true,
+//         "clear": false
+//       },
+//       "problemMatcher": [
+//         "$rustc"
+//       ]
+//     },
+//     {
+//       "label": "cargo fmt",
+//       "type": "cargo",
+//       "group": "build",
+//       "command": "+nightly fmt",
+//       "args": [
+//         "${input:CargoFmt.options}"
+//       ],
+//       "presentation": {
+//         "echo": true,
+//         "reveal": "always",
+//         "focus": false,
+//         "panel": "shared",
+//         "showReuseMessage": true,
+//         "clear": false
+//       },
+//       "problemMatcher": [
+//         "$rustc"
+//       ]
+//     },
+//     {
+//       "label": "cargo check",
+//       "type": "cargo",
+//       "group": "build",
+//       "command": "check",
+//       "args": [
+//         "${input:CargoCheck.options}"
+//       ],
+//       "presentation": {
+//         "echo": true,
+//         "reveal": "always",
+//         "focus": false,
+//         "panel": "shared",
+//         "showReuseMessage": true,
+//         "clear": false
+//       },
+//       "problemMatcher": [
+//         "$rustc"
+//       ]
+//     },
+//     {
+//       "label": "cargo clippy",
+//       "type": "cargo",
+//       "group": "build",
+//       "command": "+nightly clippy",
+//       "args": [
+//         "${input:CargoClippy.options}"
+//       ],
+//       "presentation": {
+//         "echo": true,
+//         "reveal": "always",
+//         "focus": false,
+//         "panel": "shared",
+//         "showReuseMessage": true,
+//         "clear": false
+//       },
+//       "problemMatcher": [
+//         "$rustc"
+//       ]
+//     },
+//     {
+//       "label": "cargo verify-project",
+//       "type": "cargo",
+//       "group": "build",
+//       "command": "verify-project",
+//       "args": [
+//         "${input:CargoVerifyProject.options}"
+//       ],
+//       "presentation": {
+//         "echo": true,
+//         "reveal": "always",
+//         "focus": false,
+//         "panel": "shared",
+//         "showReuseMessage": true,
+//         "clear": false
+//       },
+//       "problemMatcher": [
+//         "$rustc"
+//       ]
+//     },
+//     {
+//       "label": "cargo run",
+//       "type": "cargo",
+//       "group": "build",
+//       "command": "run",
+//       "args": [
+//         "${input:CargoRun.options}"
+//       ],
+//       "presentation": {
+//         "echo": true,
+//         "reveal": "always",
+//         "focus": false,
+//         "panel": "shared",
+//         "showReuseMessage": true,
+//         "clear": false
+//       },
+//       "problemMatcher": [
+//         "$rustc"
+//       ]
+//     },
+//     {
+//       "label": "cargo build",
+//       "type": "cargo",
+//       "group": {
+//         "kind": "build",
+//         "isDefault": true
+//       },
+//       "command": "build",
+//       "args": [
+//         "${input:CargoBuild.options}"
+//       ],
+//       "presentation": {
+//         "echo": true,
+//         "reveal": "always",
+//         "focus": false,
+//         "panel": "shared",
+//         "showReuseMessage": true,
+//         "clear": false
+//       },
+//       "problemMatcher": [
+//         "$rustc"
+//       ]
+//     },
+//     {
+//       "label": "cargo doc",
+//       "type": "cargo",
+//       "group": "build",
+//       "command": "doc",
+//       "args": [
+//         "${input:CargoDoc.options}"
+//       ],
+//       "presentation": {
+//         "echo": true,
+//         "reveal": "always",
+//         "focus": false,
+//         "panel": "shared",
+//         "showReuseMessage": true,
+//         "clear": false
+//       },
+//       "problemMatcher": [
+//         "$rustc"
+//       ]
+//     },
+//     {
+//       "label": "cargo cache",
+//       "type": "cargo",
+//       "group": "build",
+//       "command": "cache",
+//       "args": [
+//         "${input:CargoCache.options}"
+//       ],
+//       "presentation": {
+//         "echo": true,
+//         "reveal": "always",
+//         "focus": false,
+//         "panel": "shared",
+//         "showReuseMessage": true,
+//         "clear": false
+//       },
+//       "problemMatcher": [
+//         "$rustc"
+//       ]
+//     },
+//     {
+//       "label": "rust: outdated fmt clippy verify-project",
+//       "dependsOn": [
+//         "cargo outdated",
+//         "cargo fmt",
+//         "cargo clippy",
+//         "cargo verify-project",
+//       ],
+//       "dependsOrder": "sequence"
+//     }
+//   ],
+//   "inputs": [
+//     {
+//       "id": "CargoTest.options",
+//       "type": "promptString",
+//       "description": "cargo test options ?",
+//       "default": "--all-features",
+//       "password": false
+//     },
+//     {
+//       "id": "CargoBench.options",
+//       "type": "promptString",
+//       "description": "cargo bench options ?",
+//       "default": "--all-features",
+//       "password": false
+//     },
+//     {
+//       "id": "CargoOutdated.options",
+//       "type": "promptString",
+//       "description": "cargo outdated options ?",
+//       "default": "",
+//       "password": false
+//     },
+//     {
+//       "id": "CargoUpgrade.options",
+//       "type": "promptString",
+//       "description": "cargo upgrade options ?",
+//       "default": "",
+//       "password": false
+//     },
+//     {
+//       "id": "CargoAudit.options",
+//       "type": "promptString",
+//       "description": "cargo audit options ?",
+//       "default": "",
+//       "password": false
+//     },
+//     {
+//       "id": "CargoLicense.options",
+//       "type": "promptString",
+//       "description": "cargo license options ?",
+//       "default": "",
+//       "password": false
+//     },
+//     {
+//       "id": "CargoFmt.options",
+//       "type": "promptString",
+//       "description": "cargo fmt options ?",
+//       "default": "",
+//       "password": false
+//     },
+//     {
+//       "id": "CargoCheck.options",
+//       "type": "promptString",
+//       "description": "cargo check options ?",
+//       "default": "--all-features",
+//       "password": false
+//     },
+//     {
+//       "id": "CargoClippy.options",
+//       "type": "promptString",
+//       "description": "cargo clippy options ?",
+//       "default": "--all-features",
+//       "password": false
+//     },
+//     {
+//       "id": "CargoVerifyProject.options",
+//       "type": "promptString",
+//       "description": "cargo verify-project options ?",
+//       "default": "",
+//       "password": false
+//     },
+//     {
+//       "id": "CargoRun.options",
+//       "type": "promptString",
+//       "description": "cargo run options ?",
+//       "default": "",
+//       "password": false
+//     },
+//     {
+//       "id": "CargoBuild.options",
+//       "type": "promptString",
+//       "description": "cargo build options ?",
+//       "default": "",
+//       "password": false
+//     },
+//     {
+//       "id": "CargoDoc.options",
+//       "type": "promptString",
+//       "description": "cargo doc options ?",
+//       "default": "--no-deps",
+//       "password": false
+//     },
+//     {
+//       "id": "CargoCache.options",
+//       "type": "promptString",
+//       "description": "cargo doc options ?",
+//       "default": "--autoclean",
+//       "password": false
+//     }
+//   ]
+// }

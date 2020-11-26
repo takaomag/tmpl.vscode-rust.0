@@ -1,0 +1,153 @@
+# syntax=docker/dockerfile-upstream:master-labs
+## syntax=docker/dockerfile:1.3-labs
+
+ARG A_FROM_IMAGE=quay.io/takaomag/base:latest
+
+FROM ${A_FROM_IMAGE}
+
+ARG \
+  TARGETARCH \
+  A_RUST_HOME=/opt/project/share/rust \
+  A_DEV_USER_ID=1000 \
+  A_DEV_USER_NAME=takaomag \
+  A_DEV_GROUP_ID=10001 \
+  A_DEV_GROUP_NAME=developer
+
+ENV \
+  PATH=${A_RUST_HOME}/.cargo/bin:${PATH} \
+  X_DEV_USER_ID=${A_DEV_USER_ID} \
+  X_DEV_USER_NAME=${A_DEV_USER_NAME} \
+  X_DEV_GROUP_ID=${A_DEV_GROUP_ID} \
+  X_DEV_GROUP_NAME=${A_DEV_GROUP_NAME}
+
+RUN <<EOR
+echo "2016-03-03-0" > /dev/null
+set -eo pipefail
+source /opt/local/bin/x-set-shell-fonts-env.sh
+export TERM=dumb
+export LANG='en_US.UTF-8'
+
+if [[ -z "${TARGETARCH}" ]]; then
+  msg_error "[ERROR] `TARGETARCH` is not set. Enable buildkit."
+  echo
+  exit 1
+fi
+
+msg_info "[INFO] Update package database"
+if [[ "${TARGETARCH}" == 'amd64' ]];then
+  reflector --latest 20 --age 240 --country 'United States',Japan --protocol https --sort score --verbose --save /etc/pacman.d/mirrorlist
+fi
+sudo -u x-aur-helper yay -Syy --noprogressbar
+msg_success "[SUCCESS] Update package database"
+
+
+# msg_info "[INFO] Refresh package developer keys"
+# pacman-key --refresh-keys
+# msg_success "[SUCCESS] Refreshed package developer keys"
+
+
+msg_info  "[INFO] Update packages"
+cd /var/tmp
+sudo -u x-aur-helper yay -Syu --needed --removemake --cleanafter --noprogressbar --noconfirm
+msg_success "[SUCCESS] Update packages"
+
+
+msg_info "[INFO] Add user/group"
+if ! getent group ${A_DEV_GROUP_ID} >/dev/null 2>&1;then
+  groupadd --gid ${A_DEV_GROUP_ID} ${A_DEV_GROUP_NAME}
+elif [[ $(getent group ${A_DEV_GROUP_ID} | cut -d: -f1) != "${A_DEV_GROUP_NAME}" ]];then
+  groupmod --new-name ${A_DEV_GROUP_NAME} $(getent group ${A_DEV_GROUP_ID} | cut -d: -f1)
+fi
+if ! getent passwd ${A_DEV_USER_ID} >/dev/null 2>&1;then
+  groupadd --gid ${A_DEV_USER_ID} ${A_DEV_USER_NAME}
+  useradd --uid ${A_DEV_USER_ID} --gid ${A_DEV_USER_ID} -G sys,log,network,floppy,scanner,power,rfkill,systemd-journal,users,video,storage,optical,lp,input,audio,wheel,adm,ssher,${A_DEV_GROUP_ID} --create-home --comment ${A_DEV_USER_NAME} ${A_DEV_USER_NAME}
+elif [[ ${A_DEV_USER_ID} -ne 0 ]];then
+  if [[ $(id -un ${A_DEV_USER_ID}) != ${A_DEV_USER_NAME} ]];then
+    usermod --login ${A_DEV_USER_NAME} --move-home --home /home/${A_DEV_USER_NAME} $(id -un ${A_DEV_USER_ID})
+  fi
+  if [[ $(id -gn ${A_DEV_USER_ID}) != ${A_DEV_USER_NAME} ]];then
+    groupmod --new-name ${A_DEV_USER_NAME} $(id -gn ${A_DEV_USER_ID})
+  fi
+  if ! grep " ${A_DEV_GROUP_ID} " <<<" id -G ${A_DEV_USER_ID} " >/dev/null;then
+    usermod --append --groups ${A_DEV_GROUP_ID} ${A_DEV_USER_NAME}
+  fi
+fi
+mkdir -p --mode=2775 \
+  /root/.vscode-server/extensions \
+  /root/.vscode-server-insiders/extensions \
+  /home/${A_DEV_USER_NAME}/.vscode-server/extensions \
+  /home/${A_DEV_USER_NAME}/.vscode-server-insiders/extensions
+chmod 2775 \
+  /root/.vscode-server/extensions \
+  /root/.vscode-server-insiders/extensions \
+  /home/${A_DEV_USER_NAME}/.vscode-server/extensions \
+  /home/${A_DEV_USER_NAME}/.vscode-server-insiders/extensions
+setfacl -R --remove-all \
+  /root/.vscode-server/extensions \
+  /root/.vscode-server-insiders/extensions \
+  /home/${A_DEV_USER_NAME}/.vscode-server \
+  /home/${A_DEV_USER_NAME}/.vscode-server-insiders
+setfacl -R -m default:group::rwx,default:other:rx \
+  /root/.vscode-server/extensions \
+  /root/.vscode-server-insiders/extensions \
+  /home/${A_DEV_USER_NAME}/.vscode-server \
+  /home/${A_DEV_USER_NAME}/.vscode-server-insiders
+chown -R ${A_DEV_USER_ID}:${A_DEV_GROUP_ID} \
+  /root/.vscode-server/extensions \
+  /root/.vscode-server-insiders/extensions \
+  /home/${A_DEV_USER_NAME}/.vscode-server \
+  /home/${A_DEV_USER_NAME}/.vscode-server-insiders
+msg_success "[SUCCESS] Add user/group"
+
+
+REQUIRED_PACKAGES_RUST=('rust' 'lldb' 'llvm-libs')
+# Removed libstdc++5
+REQUIRED_PACKAGES_VSCODE=('glibc' 'gcc-libs' 'ca-certificates' 'tar' 'openssh' 'curl')
+# Remove aarch64-linux-musl because of gpg problem
+REQUIRED_PACKAGES_DEV=('util-linux' 'inotify-tools' 'btrfs-progs' 'procps-ng' 'psmisc' 'sysstat' 'dstat' 'htop' 'iotop' 'iftop' 'strace' 'ltrace' 'iproute2' 'nftables' 'iputils' 'ethtool' 'tcpdump' 'lsof' 'ldns' 'gnu-netcat' 'socat' 'perf' 'valgrind' 'lldb' 'llvm-libs' 'jemalloc' 'openssl' 'openssh' 'zlib' 'bzip2' 'lzo' 'lz4' 'xz' 'zstd' 'unzip' 'snappy' 'vi' 'bash-completion' 'curl' 'rsync' 'jq' 'git' 'git-lfs' 'github-cli' 'python' 'direnv')
+if [[ "${TARGETARCH}" == 'amd64' ]];then
+  REQUIRED_PACKAGES_DEV+=('aarch64-linux-gnu-gcc')
+  REQUIRED_PACKAGES_DEV+=('sysdig')
+# elif [[ "${TARGETARCH}" == 'arm64' ]];then
+fi
+msg_info "[INFO] Install required packages [${REQUIRED_PACKAGES_RUST[*]} ${REQUIRED_PACKAGES_VSCODE[*]} ${REQUIRED_PACKAGES_DEV[*]}]"
+sudo -u x-aur-helper yay -S --needed --removemake --cleanafter --noprogressbar --noconfirm ${REQUIRED_PACKAGES_RUST[@]} ${REQUIRED_PACKAGES_VSCODE[@]} ${REQUIRED_PACKAGES_DEV[@]}
+msg_success "[SUCCESS] Install required packages [${REQUIRED_PACKAGES_RUST[*]} ${REQUIRED_PACKAGES_VSCODE[*]} ${REQUIRED_PACKAGES_DEV[*]}]"
+
+
+msg_info "[INFO] Finalize"
+for u in 'root' 'x-aur-helper' "${A_DEV_USER_ID}"; do
+  d="$(getent passwd ${u} | cut -d: -f6)"
+  rm -rf "${d}/.cache/go-build"
+  rm -f "${d}/.pip/pip.log"
+  rm -rf "${d}/.cache/pip"
+  rm -f "${d}/.*_history"
+  rm -f "${d}/.*hist"
+  rm -rf "${d}/.m2/repository"
+  # rm -rf "${d}/.m2"
+  rm -rf "${d}/.ivy2/cache"
+  # rm -rf "${d}/.ivy2"
+  rm -rf "${d}/.gradle/caches"
+  rm -rf "${d}/.gradle"
+done
+
+/opt/local/bin/x-archlinux-remove-unnecessary-files.sh --paccache-keep-num 0 --remove-tmp
+# pacman-optimize
+find / -type f -name "*.pacsave" -delete || true
+# rm -f /.dockerenv
+# rm -f /.dockerinit
+rm -f /etc/hostname
+rm -f /etc/machine-id
+## https://github.com/archlinux/archlinux-docker/blob/master/Makefile
+rm -rf /etc/pacman.d/gnupg/{openpgp-revocs.d/,private-keys-v1.d/,pubring.gpg~,gnupg.S.}*
+rm -f /etc/ssh/ssh_host_*
+# find /usr/share/man -mindepth 1 -delete || true
+find /var/cache/pacman/pkg -mindepth 1 -delete || true
+find /var/lib/pacman/sync -mindepth 1 -delete || true
+msg_success "[SUCCESS] Finalize"
+EOR
+
+
+USER ${A_DEV_USER_ID}
+
+# WORKDIR /var/tmp

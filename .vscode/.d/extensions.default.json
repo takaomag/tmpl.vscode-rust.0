@@ -1,0 +1,22 @@
+{
+  "recommendations": [
+    "streetsidesoftware.code-spell-checker",
+    "christian-kohler.path-intellisense",
+    "editorconfig.editorconfig",
+    "donjayamanne.githistory",
+    "eamodio.gitlens",
+    "rubymaniac.vscode-direnv",
+    "mutantdino.resourcemonitor",
+    "foxundermoon.shell-format",
+    // "mechatroner.rainbow-csv",
+    "chrmarti.regex",
+    // "bungcip.better-toml",
+    "tamasfe.even-better-toml",
+    // "rust-lang.rust-analyzer",
+    // "vadimcn.vscode-lldb",
+    "serayuzgur.crates"
+  ],
+  "unwantedRecommendations": [
+    "rust-lang.rust"
+  ]
+}
