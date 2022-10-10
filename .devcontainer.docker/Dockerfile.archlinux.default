@@ -140,6 +140,7 @@ rm -f /etc/hostname
 rm -f /etc/machine-id
 ## https://github.com/archlinux/archlinux-docker/blob/master/Makefile
 rm -rf /etc/pacman.d/gnupg/{openpgp-revocs.d/,private-keys-v1.d/,pubring.gpg~,gnupg.S.}*
+rm -rf /etc/pacman.d/gnupg/S.gpg-agent*
 rm -f /etc/ssh/ssh_host_*
 # find /usr/share/man -mindepth 1 -delete || true
 find /var/cache/pacman/pkg -mindepth 1 -delete || true
