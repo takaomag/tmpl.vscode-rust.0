@@ -83,23 +83,23 @@ jobs:
           echo "X_BASE_IMAGE_INFO=${_base_image_info}" >> $GITHUB_ENV
           echo "X_BASE_IMAGE_DIGEST=${_base_image_digest}" >> $GITHUB_ENV
           echo "X_BASE_IMAGE_DIGEST_SHORT=${_base_image_digest_short}" >> $GITHUB_ENV
-          echo "::set-output name=start_ts::${_start_ts}"
-          echo "::set-output name=github_normalized_ref_name::${_github_normalized_ref_name}"
-          echo "::set-output name=github_sha_short::${GITHUB_SHA:0:7}"
-          echo "::set-output name=base_image_info::${_base_image_info}"
-          echo "::set-output name=base_image_digest::${_base_image_digest}"
-          echo "::set-output name=base_image_digest_short::${_base_image_digest_short}"
+          echo "start_ts=${_start_ts}" >> $GITHUB_OUTPUT
+          echo "github_normalized_ref_name=${_github_normalized_ref_name}" >> $GITHUB_OUTPUT
+          echo "github_sha_short=${GITHUB_SHA:0:7}" >> $GITHUB_OUTPUT
+          echo "base_image_info=${_base_image_info}" >> $GITHUB_OUTPUT
+          echo "base_image_digest=${_base_image_digest}" >> $GITHUB_OUTPUT
+          echo "base_image_digest_short=${_base_image_digest_short}" >> $GITHUB_OUTPUT
 
       - name: Check existing image
         id: check_existing_image
         run: |-
           # if [[ "${GITHUB_EVENT_NAME}" == 'schedule' ]] && grep --max-count=1 --quiet "\.${X_GITHUB_SHA_SHORT}\.${X_BASE_IMAGE_DIGEST_SHORT}$" <<<$(curl --fail --silent --location --retry 5 "https://quay.io/api/v1/repository/${X_OUTPUT_IMAGE_REPO}/tag/?onlyActiveTags=true&page=1&limit=100" | jq --compact-output '.tags[].name' -r);then
-          #   echo "::set-output name=already_exists::true"
+          #   echo "already_exists=true" >> $GITHUB_OUTPUT
           # else
-          #   echo "::set-output name=already_exists::false"
+          #   echo "already_exists=false" >> $GITHUB_OUTPUT
           # fi
           ## checkせずに毎日生成されるようにする。
-          echo "::set-output name=already_exists::false"
+          echo "already_exists=false" >> $GITHUB_OUTPUT
 
       ## By default, this action uses the Git context, so you don't need to use the actions/checkout action to check out the repository as this will be done directly by BuildKit.
       ## https://github.com/docker/build-push-action#git-context
