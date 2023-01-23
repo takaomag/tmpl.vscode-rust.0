@@ -159,3 +159,6 @@ jobs:
             "x_github_ref=${{ github.ref }}"
             "x_github_ref_name=${{ github.ref_name }}"
             "x_github_sha=${{ github.sha }}"
+          # Buildx v0.10 enables support for a minimal SLSA Provenance attestation, which introduces issues with registry and runtime support. Disable it.
+          # https://github.com/docker/build-push-action/releases/tag/v3.3.0
+          provenance: false
