@@ -134,7 +134,7 @@ jobs:
       - name: Build/Push docker image
         id: build_push_docker_image
         if: ${{ !fromJSON(steps.check_existing_image.outputs.already_exists) }}
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           pull: true
           push: true
