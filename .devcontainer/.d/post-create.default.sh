@@ -10,7 +10,7 @@ msg_info "[INFO] Install Rust"
 cd /var/tmp
 if [[ ! -e ${CARGO_HOME}/bin/rustup ]]; then
   export RUSTUP_INIT_SKIP_PATH_CHECK=yes
-  curl --proto '=https' --tlsv1.3 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --default-toolchain stable --profile default --component rust-src llvm-tools-preview
+  curl --proto '=https' --tlsv1.3 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --default-toolchain stable --profile default --component rust-src,llvm-tools
 fi
 export CARGO_BUILD_JOBS=$(($(nproc) > 1 ? $(nproc) - 1 : 1))
 cat <<-'HEND' >~/.profile.d/rust
@@ -42,7 +42,7 @@ if [[ "${X_OTHER_TOOLCHAINS[@]}" ]]; then
     if ! grep --quiet -E "^${_tc}-.+-linux-gnu$" <<<$(${CARGO_HOME}/bin/rustup toolchain list); then
       msg_info "[INFO] Install Rust other toolchains [${_tc}]"
       ${CARGO_HOME}/bin/rustup install --profile default ${_tc}
-      ${CARGO_HOME}/bin/rustup component add --toolchain=${_tc} rust-src llvm-tools-preview
+      ${CARGO_HOME}/bin/rustup component add --toolchain=${_tc} rust-src llvm-tools
       msg_success "[SUCCESS] Install Rust other toolchains [${_tc}]"
     fi
   done

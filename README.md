@@ -19,15 +19,15 @@ sudo chmod 2775 /opt/project /opt/project/share /opt/project/share/rust && \
 sudo chmod -R g=u /opt/project/share/rust && \
 echo 'Success'
 
-sudo mkdir -p --mode=2775 /opt/project/share/rust.aarch64 && \
+sudo mkdir -p --mode=2775 /opt/project/share/rust.aarch64-unknown-linux-gnu && \
 sudo setfacl --remove-all /opt/project /opt/project/share && \
-sudo setfacl -R --remove-all /opt/project/share/rust.aarch64 && \
+sudo setfacl -R --remove-all /opt/project/share/rust.aarch64-unknown-linux-gnu && \
 sudo setfacl -m default:group::rwx,default:other:rx /opt/project /opt/project/share && \
-sudo setfacl -R -m default:group::rwx,default:other:rx /opt/project/share/rust.aarch64 && \
+sudo setfacl -R -m default:group::rwx,default:other:rx /opt/project/share/rust.aarch64-unknown-linux-gnu && \
 sudo chown root:developer /opt/project /opt/project/share && \
-sudo chown -R root:developer /opt/project/share/rust.aarch64 && \
-sudo chmod 2775 /opt/project /opt/project/share /opt/project/share/rust.aarch64 && \
-sudo chmod -R g=u /opt/project/share/rust.aarch64 && \
+sudo chown -R root:developer /opt/project/share/rust.aarch64-unknown-linux-gnu && \
+sudo chmod 2775 /opt/project /opt/project/share /opt/project/share/rust.aarch64-unknown-linux-gnu && \
+sudo chmod -R g=u /opt/project/share/rust.aarch64-unknown-linux-gnu && \
 echo 'Success'
 ```
 

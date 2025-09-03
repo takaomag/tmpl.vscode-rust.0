@@ -1,17 +1,18 @@
 [toolchain]
-channel = "beta"
+channel = "stable"
 components = [
   "rustc",
-  "rust-std",
   "cargo",
-  "rust-docs",
   "rustfmt",
+  "rust-std",
+  "rust-docs",
+  "rust-analyzer",
   "clippy",
   "rust-src",
-  "llvm-tools-preview",
+  "llvm-tools",
 ]
 targets = [
-  "x86_64-unknown-linux-gnu",
+  # "x86_64-unknown-linux-gnu",
   # "x86_64-unknown-linux-musl",
   # "aarch64-unknown-linux-gnu",
   # "aarch64-unknown-linux-musl",
