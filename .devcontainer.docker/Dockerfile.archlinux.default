@@ -29,17 +29,17 @@ source /opt/local/bin/x-set-shell-fonts-env.sh
 export TERM=dumb
 export LANG='en_US.UTF-8'
 
-if [[ -z "${TARGETARCH}" ]]; then
+if [[ -z "$TARGETARCH" ]]; then
   msg_error "[ERROR] TARGETARCH is not set. Enable buildkit."
   echo
   exit 1
 fi
 
-# export GOOS=${TARGETOS}
-# export GOARCH=${TARGETARCH}
+# export GOOS=$TARGETOS
+# export GOARCH=$TARGETARCH
 
 msg_info "[INFO] Update package database"
-if [[ "${TARGETARCH}" == 'amd64' ]];then
+if [[ "$TARGETARCH" == 'amd64' ]];then
   reflector --latest 20 --age 240 --country 'United States',Japan --protocol https --sort score --verbose --save /etc/pacman.d/mirrorlist
 fi
 yay -Syy --noprogressbar
@@ -110,10 +110,10 @@ REQUIRED_PACKAGES_RUST=('rust' 'lldb' 'llvm-libs')
 REQUIRED_PACKAGES_VSCODE=('glibc' 'gcc-libs' 'ca-certificates' 'tar' 'openssh' 'curl')
 # Remove aarch64-linux-musl because of gpg problem
 REQUIRED_PACKAGES_DEV=('util-linux' 'inotify-tools' 'btrfs-progs' 'procps-ng' 'psmisc' 'sysstat' 'dstat' 'htop' 'iotop' 'iftop' 'strace' 'ltrace' 'iproute2' 'nftables' 'iputils' 'ethtool' 'tcpdump' 'lsof' 'ldns' 'gnu-netcat' 'socat' 'perf' 'valgrind' 'lldb' 'llvm-libs' 'jemalloc' 'openssl' 'openssh' 'zlib' 'bzip2' 'lzo' 'lz4' 'xz' 'zstd' 'unzip' 'snappy' 'vi' 'bash-completion' 'curl' 'rsync' 'jq' 'git' 'git-lfs' 'github-cli' 'python' 'direnv')
-if [[ "${TARGETARCH}" == 'amd64' ]];then
+if [[ "$TARGETARCH" == 'amd64' ]];then
   REQUIRED_PACKAGES_DEV+=('aarch64-linux-gnu-gcc')
   REQUIRED_PACKAGES_DEV+=('sysdig')
-# elif [[ "${TARGETARCH}" == 'arm64' ]];then
+# elif [[ "$TARGETARCH" == 'arm64' ]];then
 fi
 msg_info "[INFO] Install required packages [${REQUIRED_PACKAGES_RUST[*]} ${REQUIRED_PACKAGES_VSCODE[*]} ${REQUIRED_PACKAGES_DEV[*]}]"
 yay -S --needed --noprogressbar --noconfirm --removemake --cleanafter ${REQUIRED_PACKAGES_RUST[@]} ${REQUIRED_PACKAGES_VSCODE[@]} ${REQUIRED_PACKAGES_DEV[@]}
