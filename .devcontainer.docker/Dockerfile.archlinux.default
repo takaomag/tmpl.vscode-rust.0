@@ -109,7 +109,7 @@ REQUIRED_PACKAGES_RUST=('rust' 'lldb' 'llvm-libs')
 # Removed libstdc++5
 REQUIRED_PACKAGES_VSCODE=('glibc' 'gcc-libs' 'ca-certificates' 'tar' 'openssh' 'curl')
 # Remove aarch64-linux-musl because of gpg problem
-REQUIRED_PACKAGES_DEV=('util-linux' 'inotify-tools' 'btrfs-progs' 'procps-ng' 'psmisc' 'sysstat' 'dstat' 'htop' 'iotop' 'iftop' 'strace' 'ltrace' 'iproute2' 'nftables' 'iputils' 'ethtool' 'tcpdump' 'lsof' 'ldns' 'gnu-netcat' 'socat' 'perf' 'valgrind' 'lldb' 'llvm-libs' 'jemalloc' 'openssl' 'openssh' 'zlib' 'bzip2' 'lzo' 'lz4' 'xz' 'zstd' 'unzip' 'snappy' 'vi' 'bash-completion' 'curl' 'rsync' 'jq' 'git' 'git-lfs' 'github-cli' 'python' 'direnv')
+REQUIRED_PACKAGES_DEV=('util-linux' 'inotify-tools' 'btrfs-progs' 'procps-ng' 'psmisc' 'sysstat' 'dstat' 'htop' 'iotop' 'iftop' 'strace' 'ltrace' 'iproute2' 'nftables' 'iputils' 'ethtool' 'tcpdump' 'lsof' 'ldns' 'socat' 'perf' 'valgrind' 'lldb' 'llvm-libs' 'jemalloc' 'openssl' 'openssh' 'zlib' 'bzip2' 'lzo' 'lz4' 'xz' 'zstd' 'unzip' 'snappy' 'vi' 'bash-completion' 'curl' 'rsync' 'jq' 'git' 'git-lfs' 'github-cli' 'python' 'direnv')
 if [[ "${TARGETARCH}" == 'amd64' ]];then
   REQUIRED_PACKAGES_DEV+=('aarch64-linux-gnu-gcc')
   REQUIRED_PACKAGES_DEV+=('sysdig')
